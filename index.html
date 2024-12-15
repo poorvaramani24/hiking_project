@@ -17,13 +17,12 @@
 <body>
     <nav>
         <div class="nav-wrapper">
-            <a href="#" class="brand-logo right"><img id="logo" src="assets/img/logo.png"></a>
             <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
             <ul id="nav-mobile" class="left hide-on-med-and-down">
+                <li><b><a href="index.html"><img id="logo" src="assets/img/logo.png"></a></b></li>
+                <li><a href="index.html">Search Trails</a></li>
                 <li onclick="openNav()"><a href="#">History</a></li>
                 <li><a href="contact.html">Contact Us</a></li>
-                <li><a href="feedback.html">Feedback</a></li>
-                <li><a href="index.html">Home</a></li>
             </ul>
         </div>
     </nav>
@@ -36,12 +35,13 @@
             <!-- This is to input a city-->
             <form>
                 <div class="row">
+                    <div class="header-message"><h3>Let's go hiking!!!!</h3></div>
                     <div class="input-field center">
-                        <input id="searchInp" class="active" type="search" placeholder="Enter Zip code or City....">
+                        <input id="searchInp" class="active" type="search" placeholder="Enter City....">
                     </div>
-                    <button id="searchBtn" class="red lighten-2 btn waves-effect">Submit
+                    <button id="searchBtn" class="btn btn-brown waves-effect">Submit
                     </button>
-                    <button class="waves-effect btn red lighten-2"><a href="https://www.google.com/maps"
+                    <button class="waves-effect btn btn-brown"><a href="https://www.google.com/maps"
                             target="_blank">Map</a>
                     </button>
                 </div>
@@ -61,12 +61,19 @@
                     <!--Filters card-->
                     <div class="card filters">
                         <div class="intro-text center">
-                            <h5>Filters</h5>
+                            <h4>Filters</h4>
                         </div>
-                        <h6>Minimum Length of the Trail</h6>
+                        <h6>Distance Radius</h6>
                         <form action="#">
                             <p class="range-field">
-                                <input type="range" id="lengthSlider" value=5 min="0" max="100" />
+                                <input type="range" id="radiusSlider" value=10 min="0" max="100" />
+                            </p>
+                        </form>
+                        <br><br>
+                        <h6>Result Count</h6>
+                        <form action="#">
+                            <p class="range-field">
+                                <input type="range" id="countSlider" value=10 min="0" max="100" />
                             </p>
                         </form>
                         <br><br>
@@ -118,7 +125,7 @@
                 <div class="col s8">
                     <div class="card result">
                         <div class="intro-text center">
-                            <h5>Trails near <span id="city"></span></h5>
+                            <h4>Trails near <b><span id="city"></b></span></h4>
                         </div>
                         <div class="row">
                             <!--results cards display here-->

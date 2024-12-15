@@ -9,14 +9,14 @@ var i = 0;
 $(document).ready(function () {
     var searchInput = $('#searchInp');
     var searchButton = $('#searchBtn');
-    var trailLength = '';
+    var radius = '';
+    var resultCount= '10';
     var stars = '1';
-    // var APIKEY = '200624582-ef03dfcbf90f2bd9243bdef3d1acb99b';
     $(".results").hide();
     $("#filterSearchBtn").on('click', function () {
-        // ratingFilter()
         address=$('#city').text();
-        trailLength = document.getElementById("lengthSlider");
+        radius = document.getElementById("radiusSlider");
+        resultCount = document.getElementById("countSlider");
         if ($('#rating5').is(':checked')) {
             stars = '5';
         }
@@ -33,7 +33,8 @@ $(document).ready(function () {
             stars = '1';
         }
         $('.searchResults').empty()
-        resultCalc(trailLength.value, stars, address);
+        console.log(resultCount.value);
+        resultCalc(radius.value, resultCount.value, stars, address);
     });
 
     //code for popupmodal toggle
@@ -42,7 +43,7 @@ $(document).ready(function () {
     }
 
     //geolocation and hiking api    
-    function searchResults(trailLength, stars) {
+    function searchResults(radius,resultCount, stars) {
         $('.searchResults').empty()
         address = searchInput.val();
         if (address === '') {
@@ -54,11 +55,11 @@ $(document).ready(function () {
             return;
         }
         $('#city').text(address);
-        resultCalc(trailLength,stars,address)
+        resultCalc(radius,resultCount,stars,address)
     }
 
-    function resultCalc(trailLength,stars,address){
-        $(".searchBox").hide();
+    function resultCalc(radius,resultCount, stars,address){
+        // $(".searchBox").hide();
         $(".results").show();
         var geoCodeApi = {
             "async": true,
@@ -76,7 +77,8 @@ $(document).ready(function () {
             console.log(Object.values(response)[0].lon);
             var LATITUDE = Object.values(response)[0].lat;
             var LONGITUDE = Object.values(response)[0].lon;
-            var queryURL = `https://trailapi-trailapi.p.rapidapi.com/trails/explore/?lat=${LATITUDE}&lon=${LONGITUDE}`;
+            console.log("resultCount"+resultCount);
+            var queryURL = `https://trailapi-trailapi.p.rapidapi.com/trails/explore/?lat=${LATITUDE}&lon=${LONGITUDE}&radius=${radius}&per_page=${resultCount}`;
             var settings = {
                 "url": queryURL,
                 "method": "GET",
@@ -90,7 +92,7 @@ $(document).ready(function () {
                 var trails = result.data;
                 console.log(result)
                 // if no results are rendered - would form into a popup... Unless Poorva already did that
-                 if (trails.length === 0) {
+                if (trails.length === 0) {
                     var errorText = $("<p style='color:red;text-align:center;padding:30px;font-size:18px;'>")
                     .text('City does not have any trails with your filter selection criteria. Please try again!');
                     $('.searchResults').append(errorText);
@@ -106,6 +108,11 @@ $(document).ready(function () {
                     card.append(cardStacked);
                     cardStacked.append(cardContent);
                     cardStacked.append(cardAction);
+                    cardAction.append($("<a>").text("TRAIL INFO")
+                        .addClass('cardDetails')
+                        .attr('data-id', trails[i].id)
+                    );
+                        
                     cardAction.append($("<a>").text("SHOW IN MAP")
                         .addClass('cardLinks')
                         .attr('data-lat', trails[i].lat)
@@ -131,7 +138,26 @@ $(document).ready(function () {
 
                     $('.searchResults').append(card);
                 }
-                 //showing in map on card click
+
+                //showing details on card click
+                 $('.cardDetails').click(function() {
+                    var trailName = ($(this).attr('data-id'));
+                    
+                    $.ajax({
+                        url: `https://trailapi-trailapi.p.rapidapi.com/trails/${trailName}`,
+                        method: 'GET',
+                        headers: {
+                            "Access-Control-Allow-Origin": "*",
+                            "x-rapidapi-host": "trailapi-trailapi.p.rapidapi.com",
+                            "x-rapidapi-key": "ca362deadcmsh6037101ae9f25b9p1f7b00jsnf26c6a899984"
+                        }
+                    })
+                    .then(function(results){
+                        window.open(results.data[0].url, '_blank');
+                        console.log(results.data[0].url);                    
+                    });
+                });
+                //showing in map on card click
                  $('.cardLinks').click(function() {
                     var cityLat = ($(this).attr('data-lat'))
                     var cityLon = ($(this).attr('data-lon'))
@@ -159,9 +185,8 @@ $(document).ready(function () {
                     $('html, body').animate({
                         scrollTop: $("#mapid").offset().top
                     }, 500);                    
-                })
+                });
             });
-
         });
     }
 
@@ -180,7 +205,7 @@ $(document).ready(function () {
                 console.log(address)
                 $('#city').text(address);
                 $('.searchResults').empty()
-                resultCalc('5','1',address)
+                resultCalc('10','10','1',address)
                 closeNav();
             });
             li.append(searchedCities[i].name);
@@ -190,7 +215,7 @@ $(document).ready(function () {
     //code to trigget search action
     searchButton.click(function (e) {
         e.preventDefault();
-        searchResults('5','1');
+        searchResults('10','10','1');
     //storing in localstorage
         var cityObj = {
             name: address
