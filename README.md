@@ -23,3 +23,6 @@ https://docs.google.com/presentation/d/1OtZI_XHxbDcIQAct4h5ZWaGKRYHMCQOqsuPprdyp
 Click on following link -
 
 https://poorvaramani24.github.io/hiking_project
+
+Search for a city, e.g. Denver and filter results by radius or number of search results.
+Note: Filter by ratings is no longer supported.
